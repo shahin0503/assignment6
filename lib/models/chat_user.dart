@@ -1,14 +1,16 @@
 import 'package:equatable/equatable.dart';
 
-class Chatuser extends Equatable {
+class ChatUser extends Equatable {
   final String id;
+  final String email;
   final String photoUrl;
   final String displayName;
   final String phoneNumber;
   final String aboutMe;
 
-  const Chatuser({
+  const ChatUser({
     required this.id,
+    required this.email,
     required this.photoUrl,
     required this.displayName,
     required this.phoneNumber,

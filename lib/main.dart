@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
       theme: appTheme,
       routes: {
         signInRoute: (context) => const SignUpView(),
-        homeRoute: (context) => const HomeView(),
+        homeRoute: (context) => const HomeScreen(),
       },
       home: const SplashPage(),
     );
