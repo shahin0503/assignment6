@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:assignment6/constants/all_constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -16,6 +18,7 @@ class ChatProvider {
 
   Stream<QuerySnapshot> getFirestoreData(
       String collectionPath, int limit, String? textSearch) {
+    log('Provider called');
     if (textSearch?.isNotEmpty == true) {
       return firebaseFirestore
           .collection(collectionPath)

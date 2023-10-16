@@ -15,14 +15,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ChatView extends StatefulWidget {
-  const ChatView({super.key});
+class ChatView2 extends StatefulWidget {
+  const ChatView2({super.key});
 
   @override
-  State<ChatView> createState() => _ChatViewState();
+  State<ChatView2> createState() => _ChatView2State();
 }
 
-class _ChatViewState extends State<ChatView> {
+class _ChatView2State extends State<ChatView2> {
   final ScrollController scrollController = ScrollController();
 
   int _limit = 20;
@@ -147,6 +147,12 @@ class _ChatViewState extends State<ChatView> {
       Navigator.of(context)
           .pushNamedAndRemoveUntil(signInRoute, (route) => false);
     }
+    // if (authProvider.getFirebaseUserId()?.isNotEmpty == true) {
+    //   currentUserId = authProvider.getFirebaseUserId()!;
+    // } else {
+    //   Navigator.of(context)
+    //       .pushNamedAndRemoveUntil(signInRoute, (route) => false);
+    // }
 
     scrollController.addListener(scrollListener);
   }

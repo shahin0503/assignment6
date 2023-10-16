@@ -1,8 +1,12 @@
 import 'package:assignment6/constants/routes.dart';
 import 'package:assignment6/firebase_options.dart';
 import 'package:assignment6/providers/auth_provider.dart';
+import 'package:assignment6/providers/chat_provider.dart';
 import 'package:assignment6/utilities/theme.dart';
+import 'package:assignment6/view/chat_view.dart';
 import 'package:assignment6/view/home_view.dart';
+import 'package:assignment6/view/login_view.dart';
+import 'package:assignment6/view/profile_view.dart';
 import 'package:assignment6/view/sign_up_view.dart';
 import 'package:assignment6/view/splash_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,6 +25,8 @@ void main() async {
 
   runApp(MultiProvider(
     providers: [
+      Provider<ChatProvider>(
+          create: (_) => ChatProvider(firebaseFirestore: firebaseFirestore)),
       ChangeNotifierProvider<AuthProvider>(
         create: (_) => AuthProvider(
             firebaseAuth: FirebaseAuth.instance,
@@ -50,8 +56,11 @@ class MyApp extends StatelessWidget {
       title: 'Smart Talk',
       theme: appTheme,
       routes: {
-        signInRoute: (context) => const SignUpView(),
+        signInRoute: (context) => const LoginView(),
+        signUpRoute: (context) => const SignUpView(),
         homeRoute: (context) => const HomeScreen(),
+        profileRoute: (context) => const ProfileView(),
+        chatRoute: (context) => const ChatView(),
       },
       home: const SplashPage(),
     );

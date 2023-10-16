@@ -1,3 +1,4 @@
+import 'package:assignment6/constants/all_constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,10 @@ class AuthProvider extends ChangeNotifier {
     required this.firestore,
     required this.prefs,
   });
+
+  // String? getFirebaseUserId() {
+  //   return prefs.getString(FirestoreConstants.id);
+  // }
 
   Future<bool> createUser(
       String email, String password, String displayName) async {

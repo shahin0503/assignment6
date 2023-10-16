@@ -320,7 +320,7 @@ class _LoginViewState extends State<LoginView> {
           .pop(); // Close the loading indicator
 
       if (success) {
-        Navigator.of(context)
+        await Navigator.of(context)
             .pushNamedAndRemoveUntil(homeRoute, (route) => false);
       } else {
         // Handle signup failure (show error message, etc.)

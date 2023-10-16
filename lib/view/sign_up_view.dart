@@ -317,7 +317,7 @@ class _SignUpViewState extends State<SignUpView> {
 
       if (success) {
         Navigator.of(context)
-            .pushNamedAndRemoveUntil(homeRoute, (route) => false);
+            .pushNamedAndRemoveUntil(chatRoute, (route) => false);
       } else {
         // Handle signup failure (show error message, etc.)
       }

@@ -25,7 +25,7 @@ class _SplashPageState extends State<SplashPage> {
 
     User? currentuser = authProvider.currentUser;
     if (currentuser != null) {
-      Navigator.of(context).pushReplacementNamed(homeRoute);
+      Navigator.of(context).pushReplacementNamed(chatRoute);
       return;
     }
     Navigator.of(context).pushReplacementNamed(signInRoute);
