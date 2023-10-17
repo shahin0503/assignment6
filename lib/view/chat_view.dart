@@ -307,9 +307,11 @@ class _ChatViewState extends State<ChatView> {
   }
 
   Widget buildItem(BuildContext context, DocumentSnapshot? documentSnapshot) {
+    log('message: ${documentSnapshot?.data()}');
     final firebaseAuth = FirebaseAuth.instance;
     if (documentSnapshot != null) {
       ChatUser userChat = ChatUser.fromDocument(documentSnapshot);
+      log('message: $userChat');
       if (userChat.id == currentUserId) {
         return const SizedBox.shrink();
       } else {

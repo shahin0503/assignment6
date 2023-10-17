@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:assignment6/constants/all_constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
@@ -10,12 +12,13 @@ class ChatUser extends Equatable {
   final String phoneNumber;
   final String aboutMe;
 
-  const ChatUser(
-      {required this.id,
-      required this.photoUrl,
-      required this.displayName,
-      required this.phoneNumber,
-      required this.aboutMe});
+  const ChatUser({
+    required this.id,
+    required this.photoUrl,
+    required this.displayName,
+    required this.phoneNumber,
+    required this.aboutMe,
+  });
 
   ChatUser copyWith({
     String? id,
@@ -38,6 +41,7 @@ class ChatUser extends Equatable {
         FirestoreConstants.aboutMe: aboutMe,
       };
   factory ChatUser.fromDocument(DocumentSnapshot snapshot) {
+    log('Document Data: ${snapshot.data()}');
     String photoUrl = "";
     String nickname = "";
     String phoneNumber = "";

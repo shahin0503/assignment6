@@ -1,4 +1,5 @@
 import 'package:assignment6/constants/all_constants.dart';
+import 'package:assignment6/models/chat_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -92,12 +93,32 @@ class AuthProvider extends ChangeNotifier {
     User? user = firebaseAuth.currentUser;
     if (user != null) {
       try {
-        await firestore.collection('users').doc(user.uid).set({
-          'uid': user.uid,
-          'displayName': displayName,
-          'email': email,
+        ChatUser chatUser = ChatUser(
+          id: user.uid,
+          displayName: displayName,
+          aboutMe: email,
+          photoUrl: user.photoURL ?? '',
+          phoneNumber: user.phoneNumber ?? '',
+
           // Add more user properties if needed
-        });
+        );
+        await firestore
+            .collection(FirestoreConstants.pathUserCollection)
+            .doc(user.uid)
+            .set(chatUser.toJson());
+        await prefs.setString(FirestoreConstants.id, chatUser.id);
+        await prefs.setString(
+            FirestoreConstants.displayName, chatUser.displayName);
+        await prefs.setString(FirestoreConstants.photoUrl, chatUser.photoUrl);
+        await prefs.setString(
+            FirestoreConstants.phoneNumber, chatUser.phoneNumber);
+        // await firestore.collection('users').doc(user.uid).set({
+        //   'uid': user.uid,
+        //   'displayName': displayName,
+        //   'email': email,
+        //   'photoUrl': user.photoURL ?? '',
+        //   // Add more user properties if needed
+        // });
       } catch (e) {
         print('Error creating user in Firestore: $e');
         // Handle the error appropriately, e.g., show an error message to the user

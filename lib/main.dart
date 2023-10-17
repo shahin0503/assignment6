@@ -2,6 +2,7 @@ import 'package:assignment6/constants/routes.dart';
 import 'package:assignment6/firebase_options.dart';
 import 'package:assignment6/providers/auth_provider.dart';
 import 'package:assignment6/providers/chat_provider.dart';
+import 'package:assignment6/providers/profile_provider.dart';
 import 'package:assignment6/utilities/theme.dart';
 import 'package:assignment6/view/chat_view.dart';
 import 'package:assignment6/view/home_view.dart';
@@ -12,6 +13,7 @@ import 'package:assignment6/view/splash_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +24,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   SharedPreferences prefs = await SharedPreferences.getInstance();
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  FirebaseStorage firebaseStorage = FirebaseStorage.instance;
 
   runApp(MultiProvider(
     providers: [
@@ -33,6 +36,12 @@ void main() async {
             firestore: firebaseFirestore,
             prefs: prefs),
       ),
+      Provider<ProfileProvider>(
+        create: (_) => ProfileProvider(
+            prefs: prefs,
+            firebaseStorage: firebaseStorage,
+            firebaseFirestore: firebaseFirestore),
+      )
       // Add other providers if needed
     ],
     child: MyApp(prefs: prefs),
