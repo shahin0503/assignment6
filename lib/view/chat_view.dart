@@ -307,9 +307,10 @@ class _ChatViewState extends State<ChatView> {
   }
 
   Widget buildItem(BuildContext context, DocumentSnapshot? documentSnapshot) {
-    log('message: ${documentSnapshot?.data()}');
+    log('message');
+    log('message: ${documentSnapshot?.id}');
     final firebaseAuth = FirebaseAuth.instance;
-    if (documentSnapshot != null) {
+    if (documentSnapshot != null && documentSnapshot.exists) {
       ChatUser userChat = ChatUser.fromDocument(documentSnapshot);
       log('message: $userChat');
       if (userChat.id == currentUserId) {
@@ -320,15 +321,15 @@ class _ChatViewState extends State<ChatView> {
             if (KeyboardUtils.isKeyboardShowing()) {
               KeyboardUtils.closeKeyboard(context);
             }
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ChatDetailView(
-                          peerId: userChat.id,
-                          peerAvatar: userChat.photoUrl,
-                          peerNickname: userChat.displayName,
-                          userAvatar: firebaseAuth.currentUser!.photoURL!,
-                        )));
+            Navigator.of(context).pushNamed(
+              chatDetailRoute,
+              arguments: {
+                'peerId': userChat.id,
+                'peerAvatar': userChat.photoUrl,
+                'peerNickname': userChat.displayName,
+                'userAvatar': firebaseAuth.currentUser!.photoURL!,
+              },
+            );
           },
           child: ListTile(
             leading: userChat.photoUrl.isNotEmpty

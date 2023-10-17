@@ -105,7 +105,13 @@ class AuthProvider extends ChangeNotifier {
         await firestore
             .collection(FirestoreConstants.pathUserCollection)
             .doc(user.uid)
-            .set(chatUser.toJson());
+            .set({
+          'uid': user.uid,
+          'displayName': displayName,
+          'aboutMe': email,
+          'photoUrl': user.photoURL ?? '',
+          'phoneNumber': user.phoneNumber ?? ''
+        });
         await prefs.setString(FirestoreConstants.id, chatUser.id);
         await prefs.setString(
             FirestoreConstants.displayName, chatUser.displayName);

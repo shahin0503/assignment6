@@ -1,9 +1,11 @@
 import 'package:assignment6/constants/routes.dart';
 import 'package:assignment6/firebase_options.dart';
 import 'package:assignment6/providers/auth_provider.dart';
+import 'package:assignment6/providers/chat_message_provider.dart';
 import 'package:assignment6/providers/chat_provider.dart';
 import 'package:assignment6/providers/profile_provider.dart';
 import 'package:assignment6/utilities/theme.dart';
+import 'package:assignment6/view/chat_detail_view.dart';
 import 'package:assignment6/view/chat_view.dart';
 import 'package:assignment6/view/home_view.dart';
 import 'package:assignment6/view/login_view.dart';
@@ -41,7 +43,12 @@ void main() async {
             prefs: prefs,
             firebaseStorage: firebaseStorage,
             firebaseFirestore: firebaseFirestore),
-      )
+      ),
+      Provider<ChatMessageProvider>(
+          create: (_) => ChatMessageProvider(
+              prefs: prefs,
+              firebaseStorage: firebaseStorage,
+              firebaseFirestore: firebaseFirestore))
       // Add other providers if needed
     ],
     child: MyApp(prefs: prefs),
@@ -70,6 +77,12 @@ class MyApp extends StatelessWidget {
         homeRoute: (context) => const HomeScreen(),
         profileRoute: (context) => const ProfileView(),
         chatRoute: (context) => const ChatView(),
+        chatDetailRoute: (context) => const ChatDetailView(
+              peerNickname: '',
+              peerAvatar: '',
+              peerId: '',
+              userAvatar: '',
+            ),
       },
       home: const SplashPage(),
     );
