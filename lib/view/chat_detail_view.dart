@@ -17,25 +17,29 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ChatDetailView extends StatefulWidget {
-  final String peerId;
-  final String? peerAvatar;
-  final String peerNickname;
-  final String? userAvatar;
+  // final String peerId;
+  // final String? peerAvatar;
+  // final String peerNickname;
+  // final String? userAvatar;
 
-  const ChatDetailView(
-      {Key? key,
-      required this.peerNickname,
-      this.peerAvatar,
-      required this.peerId,
-      this.userAvatar})
-      : super(key: key);
+  const ChatDetailView({
+    Key? key,
+    // required this.peerNickname,
+    // this.peerAvatar,
+    // required this.peerId,
+    // this.userAvatar
+  }) : super(key: key);
 
   @override
-  State<ChatDetailView> createState() => _ChatPageState();
+  State<ChatDetailView> createState() => _ChatDetailViewState();
 }
 
-class _ChatPageState extends State<ChatDetailView> {
+class _ChatDetailViewState extends State<ChatDetailView> {
   late String currentUserId;
+  late String displayName;
+  late String peerId;
+  late String? peerAvatar;
+  late String? userAvatar;
 
   List<QueryDocumentSnapshot> listMessages = [];
 
@@ -60,6 +64,18 @@ class _ChatPageState extends State<ChatDetailView> {
     super.initState();
     chatMessageProvider = context.read<ChatMessageProvider>();
     authProvider = context.read<AuthProvider>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    Map<String, dynamic>? arguments =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    displayName = arguments?['peerNickname'];
+    peerId = arguments?['peerId'];
+    userAvatar = arguments?['userAvatar'];
+    peerAvatar = arguments?['peerAvatar'];
 
     focusNode.addListener(onFocusChanged);
     scrollController.addListener(_scrollListener);
@@ -94,15 +110,15 @@ class _ChatPageState extends State<ChatDetailView> {
       Navigator.of(context)
           .pushNamedAndRemoveUntil(signInRoute, (route) => false);
     }
-    if (currentUserId.compareTo(widget.peerId) > 0) {
-      groupChatId = '$currentUserId - ${widget.peerId}';
+    if (currentUserId.compareTo(peerId) > 0) {
+      groupChatId = '$currentUserId - $peerId';
     } else {
-      groupChatId = '${widget.peerId} - $currentUserId';
+      groupChatId = '$peerId - $currentUserId';
     }
     chatMessageProvider.updateFirestoreData(
         FirestoreConstants.pathUserCollection,
         currentUserId,
-        {FirestoreConstants.chattingWith: widget.peerId});
+        {FirestoreConstants.chattingWith: peerId});
   }
 
   Future getImage() async {
@@ -173,7 +189,7 @@ class _ChatPageState extends State<ChatDetailView> {
     if (content.trim().isNotEmpty) {
       textEditingController.clear();
       chatMessageProvider.sendChatMessage(
-          content, type, groupChatId, currentUserId, widget.peerId);
+          content, type, groupChatId, currentUserId, peerId);
       scrollController.animateTo(0,
           duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     } else {
@@ -208,10 +224,12 @@ class _ChatPageState extends State<ChatDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    // displayName = widget.peerNickname;
+    print('name: $displayName');
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Chatting with ${widget.peerNickname}'.trim()),
+        title: Text('Chatting with $displayName'.trim()),
         actions: [
           IconButton(
             onPressed: () {
@@ -325,9 +343,9 @@ class _ChatPageState extends State<ChatDetailView> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(Sizes.dimen_20),
                         ),
-                        child: widget.userAvatar != null
+                        child: userAvatar != null
                             ? Image.network(
-                                widget.userAvatar!,
+                                userAvatar!,
                                 width: Sizes.dimen_40,
                                 height: Sizes.dimen_40,
                                 fit: BoxFit.cover,
@@ -404,9 +422,9 @@ class _ChatPageState extends State<ChatDetailView> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(Sizes.dimen_20),
                         ),
-                        child: widget.peerAvatar != null
+                        child: peerAvatar != null
                             ? Image.network(
-                                widget.peerAvatar!,
+                                peerAvatar!,
                                 width: Sizes.dimen_40,
                                 height: Sizes.dimen_40,
                                 fit: BoxFit.cover,

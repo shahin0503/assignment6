@@ -8,7 +8,6 @@ import 'package:assignment6/providers/chat_provider.dart';
 import 'package:assignment6/utilities/debouncer.dart';
 import 'package:assignment6/utilities/keyboard_utils.dart';
 import 'package:assignment6/utilities/show_log_out_dialog.dart';
-import 'package:assignment6/view/chat_detail_view.dart';
 import 'package:assignment6/widgets/loading_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -321,13 +320,14 @@ class _ChatViewState extends State<ChatView> {
             if (KeyboardUtils.isKeyboardShowing()) {
               KeyboardUtils.closeKeyboard(context);
             }
+            print(userChat.displayName);
             Navigator.of(context).pushNamed(
               chatDetailRoute,
               arguments: {
                 'peerId': userChat.id,
                 'peerAvatar': userChat.photoUrl,
                 'peerNickname': userChat.displayName,
-                'userAvatar': firebaseAuth.currentUser!.photoURL!,
+                'userAvatar': firebaseAuth.currentUser!.photoURL,
               },
             );
           },
