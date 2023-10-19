@@ -5,13 +5,15 @@ import 'package:assignment6/providers/chat_message_provider.dart';
 import 'package:assignment6/providers/chat_provider.dart';
 import 'package:assignment6/providers/profile_provider.dart';
 import 'package:assignment6/utilities/theme.dart';
-import 'package:assignment6/view/chat_detail_view.dart';
-import 'package:assignment6/view/chat_view.dart';
+import 'package:assignment6/view/chat/chat_detail_view.dart';
+import 'package:assignment6/view/chat/chat_view.dart';
 import 'package:assignment6/view/home_view.dart';
-import 'package:assignment6/view/login_view.dart';
+import 'package:assignment6/view/auth/login_view.dart';
 import 'package:assignment6/view/profile_view.dart';
-import 'package:assignment6/view/sign_up_view.dart';
+import 'package:assignment6/view/auth/sign_up_view.dart';
 import 'package:assignment6/view/splash_page.dart';
+import 'package:assignment6/view/task/assign_task_view.dart';
+import 'package:assignment6/view/task/task_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -74,7 +76,7 @@ class MyApp extends StatelessWidget {
       routes: {
         signInRoute: (context) => const LoginView(),
         signUpRoute: (context) => const SignUpView(),
-        homeRoute: (context) => const HomeScreen(),
+        homeRoute: (context) => const HomeView(),
         profileRoute: (context) => const ProfileView(),
         chatRoute: (context) => const ChatView(),
         chatDetailRoute: (context) => const ChatDetailView(
@@ -83,6 +85,8 @@ class MyApp extends StatelessWidget {
               peerId: '',
               userAvatar: '',
             ),
+        taskRoute: (context) => const TaskView(),
+        assignTaskRoute: (context) => const AssignTaskView(),
       },
       home: const SplashPage(),
     );

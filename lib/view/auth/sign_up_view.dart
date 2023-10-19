@@ -1,18 +1,18 @@
 import 'package:assignment6/constants/all_constants.dart';
 import 'package:assignment6/controller/simple_ui_controller.dart';
 import 'package:assignment6/providers/auth_provider.dart';
-import 'package:assignment6/view/sign_up_view.dart';
+import 'package:assignment6/view/auth/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class SignUpView extends StatefulWidget {
+  const SignUpView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<SignUpView> createState() => _SignUpViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _SignUpViewState extends State<SignUpView> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -43,11 +43,11 @@ class _LoginViewState extends State<LoginView> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         resizeToAvoidBottomInset: false,
         body: LayoutBuilder(
           builder: (context, constraints) {
-            if (constraints.maxWidth > 600) {
+            if (constraints.maxWidth > Sizes.dimen_600) {
               return _buildLargeScreen(size, simpleUIController, theme);
             } else {
               return _buildSmallScreen(size, simpleUIController, theme);
@@ -67,7 +67,7 @@ class _LoginViewState extends State<LoginView> {
             child: RotatedBox(
               quarterTurns: 0,
               child: Image.asset(
-                'assets/images/back.png',
+                'assets/images/auth.png',
                 height: size.height * 0.6,
                 width: double.infinity,
                 fit: BoxFit.fill,
@@ -118,7 +118,7 @@ class _LoginViewState extends State<LoginView> {
         ),
         Padding(
           padding: const EdgeInsets.only(left: 20.0),
-          child: Text('Login',
+          child: Text('Sign Up',
               style: TextStyle(
                 fontSize: size.height * 0.060,
                 fontWeight: FontWeight.bold,
@@ -129,7 +129,7 @@ class _LoginViewState extends State<LoginView> {
         ),
         Padding(
           padding: const EdgeInsets.only(left: 20.0),
-          child: Text('Login to Account',
+          child: Text('Create Account',
               style: TextStyle(
                 fontSize: size.height * 0.030,
               )),
@@ -144,40 +144,40 @@ class _LoginViewState extends State<LoginView> {
             child: Column(
               children: [
                 /// username
-                // TextFormField(
-                //   style: const TextStyle(color: Colors.black),
-                //   decoration: const InputDecoration(
-                //     prefixIcon: Icon(Icons.person),
-                //     hintText: 'Username or Gmail',
-                //     border: OutlineInputBorder(
-                //       borderRadius: BorderRadius.all(Radius.circular(15)),
-                //     ),
-                //   ),
+                TextFormField(
+                  style: const TextStyle(color: Colors.black),
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.person),
+                    hintText: 'Username',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                  ),
 
-                //   controller: nameController,
-                //   // The validator receives the text that the user has entered.
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'Please enter username';
-                //     } else if (value.length < 4) {
-                //       return 'at least enter 4 characters';
-                //     } else if (value.length > 13) {
-                //       return 'maximum character is 13';
-                //     }
-                //     return null;
-                //   },
-                // ),
-                // SizedBox(
-                //   height: size.height * 0.02,
-                // ),
+                  controller: nameController,
+                  // The validator receives the text that the user has entered.
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter username';
+                    } else if (value.length < 4) {
+                      return 'at least enter 4 characters';
+                    } else if (value.length > 13) {
+                      return 'maximum character is 13';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(
+                  height: size.height * 0.02,
+                ),
 
                 /// Gmail
                 TextFormField(
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                   controller: emailController,
                   decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.email_rounded),
-                    hintText: 'Gmail',
+                    hintText: 'Email',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
@@ -207,8 +207,8 @@ class _LoginViewState extends State<LoginView> {
                       suffixIcon: IconButton(
                         icon: Icon(
                           simpleUIController.isObscure.value
-                              ? Icons.visibility
-                              : Icons.visibility_off,
+                              ? Icons.visibility_off
+                              : Icons.visibility,
                         ),
                         onPressed: () {
                           simpleUIController.isObscureActive();
@@ -238,7 +238,7 @@ class _LoginViewState extends State<LoginView> {
                 ),
 
                 /// SignUp Button
-                loginButton(theme),
+                signUpButton(theme),
                 SizedBox(
                   height: size.height * 0.03,
                 ),
@@ -246,10 +246,8 @@ class _LoginViewState extends State<LoginView> {
                 /// Navigate To Login Screen
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => const SignUpView()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (ctx) => const LoginView()));
                     nameController.clear();
                     emailController.clear();
                     passwordController.clear();
@@ -259,12 +257,12 @@ class _LoginViewState extends State<LoginView> {
                   },
                   child: RichText(
                     text: TextSpan(
-                      text: 'New user?',
+                      text: 'Already have an account?',
                       style: TextStyle(
                           fontSize: size.height * 0.022, color: Colors.black),
                       children: [
                         TextSpan(
-                            text: " SignUp",
+                            text: " Login",
                             style: TextStyle(
                               fontSize: size.height * 0.022,
                               fontWeight: FontWeight.w500,
@@ -282,7 +280,7 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget loginButton(ThemeData theme) {
+  Widget signUpButton(ThemeData theme) {
     return SizedBox(
       width: double.infinity,
       height: 55,
@@ -295,32 +293,30 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
         ),
-        onPressed: _login,
+        onPressed: _signUp,
         child: const Text(
-          'Login',
+          'Sign up',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
     );
   }
 
-  Future<void> _login() async {
+  Future<void> _signUp() async {
     if (_formKey.currentState!.validate()) {
       showDialog(
         context: context,
         builder: (context) => Center(child: CircularProgressIndicator()),
         barrierDismissible: false,
       );
-      bool success = await authProvider.signIn(
-        emailController.text,
-        passwordController.text,
-      );
+      bool success = await authProvider.createUser(
+          emailController.text, passwordController.text, nameController.text);
 
       Navigator.of(context, rootNavigator: true)
           .pop(); // Close the loading indicator
 
       if (success) {
-        await Navigator.of(context)
+        Navigator.of(context)
             .pushNamedAndRemoveUntil(homeRoute, (route) => false);
       } else {
         // Handle signup failure (show error message, etc.)

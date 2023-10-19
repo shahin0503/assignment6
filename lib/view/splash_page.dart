@@ -25,7 +25,8 @@ class _SplashPageState extends State<SplashPage> {
 
     User? currentuser = authProvider.currentUser;
     if (currentuser != null) {
-      Navigator.of(context).pushReplacementNamed(chatRoute);
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(homeRoute, (route) => false);
       return;
     }
     Navigator.of(context).pushReplacementNamed(signInRoute);
@@ -39,7 +40,7 @@ class _SplashPageState extends State<SplashPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              "Welcome to Smart Talk",
+              "Welcome to Smart team",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             Image.asset(
@@ -51,7 +52,7 @@ class _SplashPageState extends State<SplashPage> {
               height: 20,
             ),
             const Text(
-              "Smartest Chat Application",
+              "Team Application",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             const SizedBox(

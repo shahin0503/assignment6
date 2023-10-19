@@ -8,7 +8,7 @@ import 'package:assignment6/providers/chat_provider.dart';
 import 'package:assignment6/utilities/debouncer.dart';
 import 'package:assignment6/utilities/keyboard_utils.dart';
 import 'package:assignment6/utilities/show_log_out_dialog.dart';
-import 'package:assignment6/view/chat_detail_view.dart';
+import 'package:assignment6/view/chat/chat_detail_view.dart';
 import 'package:assignment6/widgets/loading_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -170,18 +170,6 @@ class _ChatViewState extends State<ChatView> {
                     centerTitle: true,
                     title: const Text('Smart Talk'),
                     actions: [
-                      IconButton(
-                          onPressed: () async {
-                            final shouldLogout =
-                                await showLogOutDialog(context);
-
-                            if (shouldLogout) {
-                              await authProvider.signOut();
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                  signInRoute, (route) => false);
-                            }
-                          },
-                          icon: const Icon(Icons.logout_sharp)),
                       IconButton(
                           onPressed: () {
                             Navigator.of(context).pushNamed(profileRoute);
