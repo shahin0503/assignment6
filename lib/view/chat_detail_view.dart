@@ -17,18 +17,18 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ChatDetailView extends StatefulWidget {
-  // final String peerId;
-  // final String? peerAvatar;
-  // final String peerNickname;
-  // final String? userAvatar;
+  final String peerId;
+  final String? peerAvatar;
+  final String peerNickname;
+  final String? userAvatar;
 
-  const ChatDetailView({
-    Key? key,
-    // required this.peerNickname,
-    // this.peerAvatar,
-    // required this.peerId,
-    // this.userAvatar
-  }) : super(key: key);
+  const ChatDetailView(
+      {Key? key,
+      required this.peerNickname,
+      this.peerAvatar,
+      required this.peerId,
+      this.userAvatar})
+      : super(key: key);
 
   @override
   State<ChatDetailView> createState() => _ChatDetailViewState();
@@ -70,12 +70,10 @@ class _ChatDetailViewState extends State<ChatDetailView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    Map<String, dynamic>? arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    displayName = arguments?['peerNickname'];
-    peerId = arguments?['peerId'];
-    userAvatar = arguments?['userAvatar'];
-    peerAvatar = arguments?['peerAvatar'];
+    displayName = widget.peerNickname;
+    peerId = widget.peerId;
+    userAvatar = widget.userAvatar;
+    peerAvatar = widget.peerAvatar;
 
     focusNode.addListener(onFocusChanged);
     scrollController.addListener(_scrollListener);
@@ -224,7 +222,6 @@ class _ChatDetailViewState extends State<ChatDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    // displayName = widget.peerNickname;
     print('name: $displayName');
     return Scaffold(
       appBar: AppBar(

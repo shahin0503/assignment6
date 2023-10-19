@@ -8,6 +8,7 @@ import 'package:assignment6/providers/chat_provider.dart';
 import 'package:assignment6/utilities/debouncer.dart';
 import 'package:assignment6/utilities/keyboard_utils.dart';
 import 'package:assignment6/utilities/show_log_out_dialog.dart';
+import 'package:assignment6/view/chat_detail_view.dart';
 import 'package:assignment6/widgets/loading_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,6 +24,10 @@ class ChatView extends StatefulWidget {
 
 class _ChatViewState extends State<ChatView> {
   final ScrollController scrollController = ScrollController();
+  double screenWidth = 0.0;
+  bool _isItemSelected = false;
+  Widget _chatDetailView =
+      const Center(child: Text('Select a user to start chatting'));
 
   int _limit = 20;
   final int _limitIncrement = 20;
@@ -152,71 +157,137 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
-    log('chat view screen');
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Smart Talk'),
-        actions: [
-          IconButton(
-              onPressed: () async {
-                final shouldLogout = await showLogOutDialog(context);
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        screenWidth = constraints.maxWidth;
+        if (screenWidth > 600) {
+          return Row(
+            children: [
+              Flexible(
+                flex: 2,
+                child: Scaffold(
+                  appBar: AppBar(
+                    centerTitle: true,
+                    title: const Text('Smart Talk'),
+                    actions: [
+                      IconButton(
+                          onPressed: () async {
+                            final shouldLogout =
+                                await showLogOutDialog(context);
 
-                if (shouldLogout) {
-                  await authProvider.signOut();
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(signInRoute, (route) => false);
+                            if (shouldLogout) {
+                              await authProvider.signOut();
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                  signInRoute, (route) => false);
+                            }
+                          },
+                          icon: const Icon(Icons.logout_sharp)),
+                      IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(profileRoute);
+                          },
+                          icon: const Icon(Icons.person))
+                    ],
+                  ),
+                  body: buildChatViewBody(),
+                ),
+              ),
+              Flexible(
+                flex: 5,
+                child: Builder(
+                  builder: (BuildContext context) {
+                    if (!_isItemSelected) {
+                      return Center(child: Text('Please select user'));
+                    } else {
+                      return _chatDetailView;
+                    }
+                  },
+                ),
+              )
+            ],
+          );
+        } else {
+          return Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: const Text('Smart Talk'),
+              actions: [
+                IconButton(
+                    onPressed: () async {
+                      final shouldLogout = await showLogOutDialog(context);
+
+                      if (shouldLogout) {
+                        await authProvider.signOut();
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            signInRoute, (route) => false);
+                      }
+                    },
+                    icon: const Icon(Icons.logout_sharp)),
+                IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(profileRoute);
+                    },
+                    icon: const Icon(Icons.person))
+              ],
+            ),
+            body: buildChatViewBody(),
+          );
+        }
+      },
+    );
+  }
+
+  Widget buildChatViewBody() {
+    return Stack(children: [
+      Column(
+        children: [
+          buildSearchBar(),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: chatProvider.getFirestoreData(
+                FirestoreConstants.pathUserCollection,
+                _limit,
+                _textSearch,
+              ),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  if ((snapshot.data?.docs.length ?? 0) > 0) {
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) =>
+                          buildItem(context, snapshot.data?.docs[index]),
+                      controller: scrollController,
+                      separatorBuilder: (BuildContext context, int index) =>
+                          const Divider(),
+                    );
+                  } else {
+                    return const Center(child: Text('No User Found'));
+                  }
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
               },
-              icon: const Icon(Icons.logout_sharp)),
-          IconButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(profileRoute);
-              },
-              icon: const Icon(Icons.person))
+            ),
+          )
         ],
       ),
-      body: Stack(children: [
-        Column(
-          children: [
-            buildSearchBar(),
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: chatProvider.getFirestoreData(
-                  FirestoreConstants.pathUserCollection,
-                  _limit,
-                  _textSearch,
-                ),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    if ((snapshot.data?.docs.length ?? 0) > 0) {
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (context, index) =>
-                            buildItem(context, snapshot.data?.docs[index]),
-                        controller: scrollController,
-                        separatorBuilder: (BuildContext context, int index) =>
-                            const Divider(),
-                      );
-                    } else {
-                      return const Center(child: Text('No User Found'));
-                    }
-                  } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-            )
-          ],
-        ),
-        Positioned(
-          child: isLoading ? const LoadingView() : const SizedBox.shrink(),
-        ),
-      ]),
+      Positioned(
+        child: isLoading ? const LoadingView() : const SizedBox.shrink(),
+      ),
+    ]);
+  }
+
+  Widget buildChatDetailView(String peerId, String peerAvatar,
+      String peerNickname, String userAvatar) {
+    return ChatDetailView(
+      peerId: peerId,
+      peerAvatar: peerAvatar,
+      peerNickname: peerNickname,
+      userAvatar: userAvatar,
     );
   }
 
@@ -317,19 +388,31 @@ class _ChatViewState extends State<ChatView> {
       } else {
         return TextButton(
           onPressed: () {
-            if (KeyboardUtils.isKeyboardShowing()) {
-              KeyboardUtils.closeKeyboard(context);
+            if (screenWidth > 600) {
+              setState(() {
+                _isItemSelected = true;
+                _chatDetailView = ChatDetailView(
+                  peerId: userChat.id,
+                  peerAvatar: userChat.photoUrl,
+                  peerNickname: userChat.displayName,
+                  userAvatar: firebaseAuth.currentUser!.photoURL,
+                );
+              });
+            } else {
+              if (KeyboardUtils.isKeyboardShowing()) {
+                KeyboardUtils.closeKeyboard(context);
+              }
+              print(userChat.displayName);
+              Navigator.of(context).pushNamed(
+                chatDetailRoute,
+                arguments: {
+                  'peerId': userChat.id,
+                  'peerAvatar': userChat.photoUrl,
+                  'peerNickname': userChat.displayName,
+                  'userAvatar': firebaseAuth.currentUser!.photoURL,
+                },
+              );
             }
-            print(userChat.displayName);
-            Navigator.of(context).pushNamed(
-              chatDetailRoute,
-              arguments: {
-                'peerId': userChat.id,
-                'peerAvatar': userChat.photoUrl,
-                'peerNickname': userChat.displayName,
-                'userAvatar': firebaseAuth.currentUser!.photoURL,
-              },
-            );
           },
           child: ListTile(
             leading: userChat.photoUrl.isNotEmpty
