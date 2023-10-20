@@ -11,8 +11,13 @@ class TaskView extends StatefulWidget {
 }
 
 class _TaskViewState extends State<TaskView> {
+  final User? user = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
+    var isWideScreen = MediaQuery.of(context).size.width > 600;
+    var crossAxisCount = isWideScreen ? 2 : 1;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Task Manager'),
@@ -23,28 +28,48 @@ class _TaskViewState extends State<TaskView> {
           if (!snapshot.hasData) {
             return CircularProgressIndicator();
           }
-
           var tasks = snapshot.data?.docs;
-          var user = FirebaseAuth.instance.currentUser;
+          List<Widget> taskWidgets = [];
 
-          // Filter tasks assigned to the logged-in user
-          var userTasks = tasks?.where((task) {
-            var assignedUsers = task['assignedUsers'] as List;
-            return assignedUsers.contains(user?.uid);
-          }).toList();
+          for (var task in tasks!) {
+            var taskData = task.data() as Map<String, dynamic>;
+            var taskName = taskData['taskname'] as String;
+            var assignedUsers =
+                taskData['assignedusers'] as Map<String, dynamic>;
 
-          return ListView.builder(
-            itemCount: userTasks?.length,
-            itemBuilder: (context, index) {
-              var task = userTasks?[index];
-              var taskName = task?['taskName'];
-
-              return ListTile(
-                title: Text(taskName),
-                // You can customize how you want to display other task details here
-              );
-            },
-          );
+            // Check if the logged-in user is assigned to the task
+            if (assignedUsers.containsKey(user?.uid)) {
+              var isCompleted = assignedUsers[user?.uid] as bool;
+              taskWidgets.add(ListTile(
+                title: Text(
+                  taskName,
+                  style: TextStyle(
+                    decoration: isCompleted
+                        ? TextDecoration.lineThrough
+                        : TextDecoration.none,
+                  ),
+                ),
+                trailing: Checkbox(
+                  value: isCompleted,
+                  onChanged: (bool? value) {
+                    FirebaseFirestore.instance
+                        .collection('tasks')
+                        .doc(task.id)
+                        .update({
+                      'assignedusers.${user?.uid}': value,
+                    });
+                  },
+                ),
+              ));
+            }
+          }
+          return GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount, childAspectRatio: 10),
+              itemCount: taskWidgets.length,
+              itemBuilder: (context, index) {
+                return Card(elevation: 4, child: taskWidgets[index]);
+              });
         },
       ),
       floatingActionButton: Padding(

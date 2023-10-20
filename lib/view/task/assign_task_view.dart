@@ -92,29 +92,18 @@ class _AssignTaskViewState extends State<AssignTaskView> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: ElevatedButton(
         onPressed: () async {
-          // Create a new collection 'tasks' and add task name with assigned users
           String taskName = _taskController.text;
-          DocumentReference taskReference =
-              await FirebaseFirestore.instance.collection('tasks').add({
-            'taskName': taskName,
-            'assignedUsers': selectedUsers,
-            'completed': false,
+
+          Map<String, bool> assignedUsersMap = {};
+          for (String userId in selectedUsers) {
+            assignedUsersMap[userId] = false;
+          }
+
+          await FirebaseFirestore.instance.collection('tasks').add({
+            'taskname': taskName,
+            'assignedusers': assignedUsersMap,
           });
 
-          String taskId = taskReference.id;
-
-          for (var userId in selectedUsers) {
-            FirebaseFirestore.instance
-                .collection('tasks')
-                .doc(taskId)
-                .collection('assignedUsers')
-                .doc(userId)
-                .set({
-              'completed':
-                  false, // Set initial completed status to false for each user
-            });
-          }
-          // Clear selected users after assigning the task
           setState(() {
             selectedUsers.clear();
             _taskController.clear();
