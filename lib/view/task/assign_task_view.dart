@@ -3,13 +3,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class AssignTaskView extends StatefulWidget {
-  const AssignTaskView({super.key});
+  const AssignTaskView({Key? key});
 
   @override
   State<AssignTaskView> createState() => _AssignTaskViewState();
 }
 
 class _AssignTaskViewState extends State<AssignTaskView> {
+  TextEditingController _taskController = TextEditingController();
+
+  List<String> selectedUsers = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +29,7 @@ class _AssignTaskViewState extends State<AssignTaskView> {
               child: FractionallySizedBox(
                 widthFactor: 0.45,
                 child: TextFormField(
-                  // controller: _taskController,
+                  controller: _taskController,
                   decoration:
                       kTextInputDecoration.copyWith(labelText: 'Enter Task'),
                 ),
@@ -36,53 +40,93 @@ class _AssignTaskViewState extends State<AssignTaskView> {
             stream: FirebaseFirestore.instance.collection('users').snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return CircularProgressIndicator(); // Loading indicator while fetching data
+                return const CircularProgressIndicator();
               }
 
               var users = snapshot.data?.docs;
 
-              List<Widget> userChips = [];
+              return Wrap(
+                runSpacing: 8,
+                children: List.generate(users?.length ?? 0, (index) {
+                  var userData = users![index].data();
+                  var userId = users[index].id;
+                  var userName = userData['displayName'];
+                  var userAbout = userData['aboutMe'];
 
-              for (var user in users!) {
-                var userData = user.data() as Map<String, dynamic>;
-                var userName = userData[
-                    'displayName']; // Assuming 'name' is the field in your user collection
-                var userAbout = userData[
-                    'aboutMe']; // Assuming 'email' is the field in your user collection
-
-                var userChip = Chip(
-                  label: Column(
-                    children: [
-                      Text(
-                        '$userName',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        '$userAbout',
-                        style: TextStyle(
-                            color: Colors.grey, fontWeight: FontWeight.w600),
-                      )
-                    ],
-                  ),
-
-                  // You can add more properties like avatar, delete functionality, etc., as per your requirements
-                );
-
-                userChips.add(userChip);
-              }
-
-              return SingleChildScrollView(
-                child: Column(
-                  children: userChips,
-                ),
+                  return ChoiceChip(
+                    label: Column(
+                      children: [
+                        Text(
+                          '$userName',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          '$userAbout',
+                          style: const TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.w100),
+                        ),
+                      ],
+                    ),
+                    selected: selectedUsers.contains(userId),
+                    onSelected: (bool selected) {
+                      setState(() {
+                        if (selected) {
+                          selectedUsers.add(userId);
+                        } else {
+                          selectedUsers.remove(userId);
+                        }
+                      });
+                    },
+                    shape: StadiumBorder(),
+                    backgroundColor: selectedUsers.contains(userId)
+                        ? Colors.blue
+                        : Colors.grey,
+                    selectedColor: Colors.blue,
+                  );
+                }),
               );
             },
           ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton:
-          ElevatedButton(onPressed: () {}, child: Text('Assign')),
+      floatingActionButton: ElevatedButton(
+        onPressed: () async {
+          // Create a new collection 'tasks' and add task name with assigned users
+          String taskName = _taskController.text;
+          DocumentReference taskReference =
+              await FirebaseFirestore.instance.collection('tasks').add({
+            'taskName': taskName,
+            'assignedUsers': selectedUsers,
+            'completed': false,
+          });
+
+          String taskId = taskReference.id;
+
+          for (var userId in selectedUsers) {
+            FirebaseFirestore.instance
+                .collection('tasks')
+                .doc(taskId)
+                .collection('assignedUsers')
+                .doc(userId)
+                .set({
+              'completed':
+                  false, // Set initial completed status to false for each user
+            });
+          }
+          // Clear selected users after assigning the task
+          setState(() {
+            selectedUsers.clear();
+            _taskController.clear();
+          });
+
+          // Show a success message or navigate to another screen
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Task assigned successfully!')),
+          );
+        },
+        child: const Text('Assign'),
+      ),
     );
   }
 }
