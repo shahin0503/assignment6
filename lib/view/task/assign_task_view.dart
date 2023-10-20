@@ -100,8 +100,8 @@ class _AssignTaskViewState extends State<AssignTaskView> {
           }
 
           await FirebaseFirestore.instance.collection('tasks').add({
-            'taskname': taskName,
-            'assignedusers': assignedUsersMap,
+            'taskName': taskName,
+            'assignedUsers': assignedUsersMap,
           });
 
           setState(() {

@@ -6,3 +6,4 @@ const chatRoute = '/Chat/';
 const chatDetailRoute = '/Chat-Detail/';
 const taskRoute = '/Task/';
 const assignTaskRoute = '/Assign-Task/';
+const teamStatusRoute = '/Team-Status/';

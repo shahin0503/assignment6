@@ -33,9 +33,9 @@ class _TaskViewState extends State<TaskView> {
 
           for (var task in tasks!) {
             var taskData = task.data() as Map<String, dynamic>;
-            var taskName = taskData['taskname'] as String;
+            var taskName = taskData['taskName'] as String;
             var assignedUsers =
-                taskData['assignedusers'] as Map<String, dynamic>;
+                taskData['assignedUsers'] as Map<String, dynamic>;
 
             // Check if the logged-in user is assigned to the task
             if (assignedUsers.containsKey(user?.uid)) {
@@ -56,7 +56,7 @@ class _TaskViewState extends State<TaskView> {
                         .collection('tasks')
                         .doc(task.id)
                         .update({
-                      'assignedusers.${user?.uid}': value,
+                      'assignedUsers.${user?.uid}': value,
                     });
                   },
                 ),
@@ -72,27 +72,54 @@ class _TaskViewState extends State<TaskView> {
               });
         },
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed(assignTaskRoute);
-          },
-          style: ElevatedButton.styleFrom(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
-            ),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Assign task',
-              style: TextStyle(
-                fontSize: 18.0, // Adjust the font size as needed
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(assignTaskRoute);
+              },
+              style: ElevatedButton.styleFrom(
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
+                ),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Assign task',
+                  style: TextStyle(
+                    fontSize: 18.0, // Adjust the font size as needed
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(teamStatusRoute);
+              },
+              style: ElevatedButton.styleFrom(
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
+                ),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Team Status',
+                  style: TextStyle(
+                    fontSize: 18.0, // Adjust the font size as needed
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
