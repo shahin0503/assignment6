@@ -14,7 +14,7 @@ import 'package:assignment6/view/auth/sign_up_view.dart';
 import 'package:assignment6/view/splash_page.dart';
 import 'package:assignment6/view/task/assign_task_view.dart';
 import 'package:assignment6/view/task/task_view.dart';
-import 'package:assignment6/view/task/team_status_view.dart';
+import 'package:assignment6/view/task/task_status_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -88,7 +88,7 @@ class MyApp extends StatelessWidget {
             ),
         taskRoute: (context) => const TaskView(),
         assignTaskRoute: (context) => const AssignTaskView(),
-        teamStatusRoute: (context) => const TeamStatusView(),
+        taskStatusRoute: (context) => const TaskStatusView(),
       },
       home: const SplashPage(),
     );

@@ -45,7 +45,7 @@ class _HomeViewState extends State<HomeView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
-                'Welcome to Smart Team Application',
+                'Smart Team Application',
                 style: TextStyle(
                     fontSize: Sizes.dimen_50,
                     fontWeight: FontWeight.bold,
@@ -54,9 +54,8 @@ class _HomeViewState extends State<HomeView> {
               const Padding(
                 padding: EdgeInsets.all(Sizes.dimen_14),
                 child: Text(
-                  '''Welcome to our versatile application that seamlessly combines the power of communication and efficient task management! Whether you're on your mobile device or using the web, our app revolutionizes the way you interact and collaborate with your team. With two core components, our app offers a dynamic chatting experience that caters to both one-on-one conversations and group discussions. Stay connected effortlessly and foster meaningful conversations with your team members, no matter where they are. Additionally, our robust task manager simplifies project coordination. Easily assign tasks to team members, set deadlines, and track progress in real-time. Team members receive instant notifications for task updates, ensuring everyone stays in the loop and projects move forward seamlessly. Experience the perfect blend of communication and productivity – all in one app. Join us in transforming the way you work and collaborate. Download now and elevate your team's efficiency to new heights! ''',
-                  style: TextStyle(
-                    fontSize: Sizes.dimen_12,
+                  'Welcome to our versatile application that seamlessly combines the power of communication and efficient task management!' , style: TextStyle(
+                    fontSize: Sizes.dimen_22,
                     color: Colors.black,
                   ),
                 ),

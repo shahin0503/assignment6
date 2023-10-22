@@ -101,7 +101,7 @@ class _TaskViewState extends State<TaskView> {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushNamed(teamStatusRoute);
+                Navigator.of(context).pushNamed(taskStatusRoute);
               },
               style: ElevatedButton.styleFrom(
                 shape: const RoundedRectangleBorder(
@@ -111,7 +111,7 @@ class _TaskViewState extends State<TaskView> {
               child: const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
-                  'Team Status',
+                  'Task Status',
                   style: TextStyle(
                     fontSize: 18.0, // Adjust the font size as needed
                   ),

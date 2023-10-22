@@ -113,6 +113,8 @@ class _AssignTaskViewState extends State<AssignTaskView> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Task assigned successfully!')),
           );
+
+          Navigator.of(context).pop();
         },
         child: const Text('Assign'),
       ),

@@ -2,14 +2,14 @@ import 'package:assignment6/constants/size_constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class TeamStatusView extends StatefulWidget {
-  const TeamStatusView({super.key});
+class TaskStatusView extends StatefulWidget {
+  const TaskStatusView({super.key});
 
   @override
-  State<TeamStatusView> createState() => _TeamStatusViewState();
+  State<TaskStatusView> createState() => _TaskStatusViewState();
 }
 
-class _TeamStatusViewState extends State<TeamStatusView> {
+class _TaskStatusViewState extends State<TaskStatusView> {
   String? _selectedTask;
   List<DocumentSnapshot> _taskDetails = [];
 
@@ -33,11 +33,18 @@ class _TeamStatusViewState extends State<TeamStatusView> {
       _taskDetails = taskDetailsSnapshot.docs;
     });
   }
-  // tasksSnapshot.docs.forEach((doc) {
-  //   taskNames.add(doc[
-  //       'taskName']); // Assuming your task name field is named 'taskName' in Firestore
-  // });
-  // return taskNames;
+
+  Future<String> _getUsername(String userId) async {
+    DocumentSnapshot userSnapshot =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+    if (userSnapshot.exists) {
+      String username = userSnapshot['displayName'];
+      return username;
+    } else {
+      return 'Unknown User';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,38 +106,44 @@ class _TeamStatusViewState extends State<TeamStatusView> {
                       String userId = entry.key;
                       bool completed = entry.value;
 
-                      return ListTile(
-                        title: Text(
-                          userId,
-                          style: TextStyle(
-                            decoration: completed
-                                ? TextDecoration.lineThrough
-                                : TextDecoration.none,
-                          ),
-                        ),
-                        trailing: Checkbox(
-                          value: completed,
-                          onChanged: (bool? newValue) {
-                            // Map<String, dynamic> updatedAssignedUsers =
-                            //     Map.from(assignedUsers);
-                            // updatedAssignedUsers[userId] = newValue;
-
-                            FirebaseFirestore.instance
-                                .collection('tasks')
-                                .doc(task.id)
-                                .update({
-                              'assignedUsers.$userId': newValue,
-                            }).then((_) {
-                              // Call setState after updating Firestore data to rebuild the UI
-                              setState(() {
-                                _taskDetails[index]['assignedUsers'][userId] =
-                                    newValue;
-                              });
-                            }).catchError((error) {
-                              print('Error updating checkbox value: $error');
-                            });
-                          },
-                        ),
+                      return FutureBuilder<String>(
+                        future: _getUsername(userId),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            String username = snapshot.data ?? 'Unknown User';
+                            return Card(
+                              elevation: 4,
+                              child: ListTile(
+                                title: Text(
+                                  username,
+                                  style: TextStyle(
+                                    decoration: completed
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none,
+                                  ),
+                                ),
+                                trailing: Checkbox(
+                                  value: completed,
+                                  onChanged: (bool? newValue) {
+                                   
+                                    FirebaseFirestore.instance
+                                        .collection('tasks')
+                                        .doc(task.id)
+                                        .update({
+                                      'assignedUsers.$userId': newValue,
+                                    });
+                                    
+                                  },
+                                ),
+                              ),
+                            );
+                          }
+                        },
                       );
                     },
                   ).toList(),
